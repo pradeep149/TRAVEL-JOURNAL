@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from os import path as os_path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -76,8 +79,8 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 #enter your email and password here
-EMAIL_HOST_USER = 'nethetipradeep.20.it@anits.edu.in'
-EMAIL_HOST_PASSWORD = 'ASDasd@123'
+EMAIL_HOST_USER = 'npradeep1149@gmail.com'
+EMAIL_HOST_PASSWORD = 'agwicqngemqqokzr'
 
 WSGI_APPLICATION = 'travelJournal.wsgi.application'
 
@@ -132,6 +135,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    os_path.join(BASE_DIR , "static"),
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

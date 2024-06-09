@@ -1,0 +1,123 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Journal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-6Zl6ySNVTuz6xoFv4aAwN6R1QI5FjRxkezlMR6XnSDt0ixusnG21S8cbPItLmU51qBxjkTzCfOsTJG5HxHHp6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="\static\css\home.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo-title">
+            <img class="logo" src="\statics\media\travel-journal-logo.png" alt="Travel Journal Logo">
+            <h1 class="title">Travel Journal</h1>
+        </div>
+        <nav class="nav-menu">
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#features">Features</a>
+            <a href="#contact">Contact</a>
+        </nav>
+        <div class="login">
+            <a href="login"><b>Login</b></a>
+        </div>
+    </header>
+
+    {% comment %} <section id="home">
+        <div class="welcome-banner">
+            <h1>Welcome to Travel Journal</h1>
+            <p>Share your travel experiences and inspire others with your journey!</p>
+        </div>
+        <div class="leaderboard">
+            <h1>Top Rated Experiences</h1>
+            <div class="leaderboard-container">
+                {% for user in users %}
+                <div class="leaderboard-item">
+                    <div class="rank">{{ forloop.counter }}</div>
+                    <div class="details">
+                        <p><strong>Username:</strong> {{ user.username }}</p>
+                        <p><strong>Experience Rating:</strong> {{ user.experience_rating }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section> {% endcomment %}
+    
+    <section class="vision" id="about">
+        <div class="vision-content">
+            <h2>About Us</h2>
+            <p>
+                At Travel Journal, we believe that every journey is unique and worth sharing. Our platform allows you to post photos, share your experiences, and rate the places you visit. By making your data public, you help other travelers make informed decisions based on real experiences.
+                <br><br>
+                Join our community of explorers and start documenting your adventures today. Together, we can create a valuable resource for travelers worldwide.
+                <br><br>
+                Whether you’re seeking inspiration for your next trip or wanting to share your travel stories, Travel Journal is the place for you.
+            </p>
+        </div>
+        <img class="vision-image" src="\static\media\travel-vision.png" alt="Travel Vision Image">
+    </section>
+
+    <h2 style="padding-left: 40px;">Features</h2>
+    <section class="features" id="features">
+        <div class="feature">
+            <h3>Post Photos</h3>
+            <p>Share your travel moments with our community by posting photos of the places you visit. Capture the beauty and essence of each location and inspire others with your visual stories.</p>
+        </div>
+        <div class="feature">
+            <h3>Write Experiences</h3>
+            <p>Document your travel experiences, share tips, and provide insights on the best places to visit. Your stories can guide other travelers and help them make the most of their journeys.</p>
+        </div>
+        <div class="feature">
+            <h3>Rate Locations</h3>
+            <p>Rate the places you visit based on various parameters like cleanliness, hospitality, and overall experience. Your ratings help build a comprehensive guide for future travelers.</p>
+        </div>
+    </section>
+
+    <footer class="footer" id="contact">
+        <div class="footer-content">
+            <div class="footer-section about">
+                <h2>About Us</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla tristique magna nec justo convallis fermentum.</p>
+                <div class="contact">
+                    <span><i class="fas fa-phone"></i> +1 (123) 456-7890</span>
+                    <span><i class="fas fa-envelope"></i> info@traveljournal.com</span>
+                </div>
+                <div class="socials">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+            <div class="footer-section links">
+                <h2>Quick Links</h2>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Features</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section contact-form">
+                <h2>Contact Us</h2>
+                <form action="#">
+                    <input type="email" name="email" class="text-input contact-input" placeholder="Your email address">
+                    <textarea name="message" class="text-input contact-input" placeholder="Your message"></textarea>
+                    <button type="submit" class="btn btn-big contact-btn">
+                        <i class="fas fa-envelope"></i>
+                        Send
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2024 Travel Journal. All rights reserved.
+        </div>
+    </footer>
+</body>
+</html>

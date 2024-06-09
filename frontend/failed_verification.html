@@ -1,0 +1,63 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification Failed</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 100px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .head {
+            display: flex;
+            flex-direction: row;
+        }
+        
+        .head img {
+            width: 50px; /* Adjust the width of your logo */
+            height: 50px;
+            padding: 10px;
+        }
+
+        
+        h1 {
+            color: #333;
+        }
+        p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .error-message {
+            color: #ff0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="head">
+        <img src="\static\media\logo.png" alt="Overleaf Logo">
+        <h1>TJ</h1>
+    </div>
+    <div class="container">
+        <h1>Email Verification Failed</h1>
+        <p class="error-message">{{ error_message }}</p>
+        <p>The verification link is invalid or has expired. Please try again or request a new verification email by registering again.</p>
+        <p><a href="/">Go to Home Page</a></p>
+    </div>
+</body>
+</html>

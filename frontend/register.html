@@ -1,15 +1,210 @@
-{% extends 'base.html' %}
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <!-- Include CSRF token -->
+    {% csrf_token %}
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+</head>
+<style>
+    body {
+        position: relative;
+        z-index: 0; /* Ensure the body content is above the pseudo-element */
+      }
+      
+      body::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url('/static/media/tjbgimg.jpg');
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+        opacity: 0.5; /* Adjust the opacity value as needed */
+        z-index: -1; /* Ensure the pseudo-element is below the body content */
+      }
+      
+  </style>
+<body>
+<div class="container">
+    <div class="form-container">
+        <div>
+            <h2>Create your Account here</h2>
+        </div>
+        <form id="signupForm" method="POST" onsubmit="return validateForm()">
+            {% csrf_token %}
+            <div id="errorMessage" class="error-message" style="display: none;"></div>
+            <label for="email">Email</label>
+            <input id="email" name="email" type="text" placeholder="Enter your email">
 
-{% block content %}
-<div class="form-container">
-    <h1>Register</h1>
-    <form method="post">
-        {% csrf_token %}
-        <label for="username">Username:</label>
-        <input type="text" name="username" required>
-        <label for="password">Password:</label>
-        <input type="password" name="password" required>
-        <button type="submit">Register</button>
-    </form>
+            <label for="username">Username</label>
+            <input id="username" name="username" type="text" placeholder="Enter your username">
+
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" placeholder="Enter your password">
+
+            <label for="confirm_password">Confirm Password</label>
+            <input id="confirm_password" name="confirm_password" type="password" placeholder="Confirm your password">
+
+            <label for="state">Select State:</label>
+            <select id = state name = state>
+                <option value="default">Select your State</option>
+                <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+        <option value="Andhra Pradesh">Andhra Pradesh</option>
+        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+        <option value="Assam">Assam</option>
+        <option value="Bihar">Bihar</option>
+        <option value="Chandigarh">Chandigarh</option>
+        <option value="Chhattisgarh">Chhattisgarh</option>
+        <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+        <option value="Daman and Diu">Daman and Diu</option>
+        <option value="Delhi">Delhi</option>
+        <option value="Goa">Goa</option>
+        <option value="Gujarat">Gujarat</option>
+        <option value="Haryana">Haryana</option>
+        <option value="Himachal Pradesh">Himachal Pradesh</option>
+        <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+        <option value="Jharkhand">Jharkhand</option>
+        <option value="Karnataka">Karnataka</option>
+        <option value="Kerala">Kerala</option>
+        <option value="Lakshadweep">Lakshadweep</option>
+        <option value="Madhya Pradesh">Madhya Pradesh</option>
+        <option value="Maharashtra">Maharashtra</option>
+        <option value="Manipur">Manipur</option>
+        <option value="Meghalaya">Meghalaya</option>
+        <option value="Mizoram">Mizoram</option>
+        <option value="Nagaland">Nagaland</option>
+        <option value="Odisha">Odisha</option>
+        <option value="Puducherry">Puducherry</option>
+        <option value="Punjab">Punjab</option>
+        <option value="Rajasthan">Rajasthan</option>
+        <option value="Sikkim">Sikkim</option>
+        <option value="Tamil Nadu">Tamil Nadu</option>
+        <option value="Telangana">Telangana</option>
+        <option value="Tripura">Tripura</option>
+        <option value="Uttar Pradesh">Uttar Pradesh</option>
+        <option value="Uttarakhand">Uttarakhand</option>
+        <option value="West Bengal">West Bengal</option>
+            </select>
+
+            <label for="location">Address Line 1</label>
+            <input id="location1" name="location1" type="text" placeholder="Flat / House no / Floor / Building *">
+
+            <label for="location">Address Line 2</label>
+            <input id="location2" name="location2" type="text" placeholder="Area / Sector / Locality">
+
+            <label for="location">Address Line 3</label>
+            <input id="location3" name="location3" type="text" placeholder="Pincode">
+
+            <input type="submit" value="Sign Up">
+        </form>
+        <p class="already-have-account">Already have an account? <a href="login">Login</a></p>
+    </div>
 </div>
-{% endblock %}
+
+<script>
+    function validateForm() {
+        var email = document.getElementById("email").value;
+        var username = document.getElementById("username").value;
+        var password = document.getElementById("password").value;
+        var confirmPassword = document.getElementById("confirm_password").value;
+        var location1 = document.getElementById("location1").value;
+        var location2 = document.getElementById("location2").value;
+        var location3 = document.getElementById("location3").value;
+        var state = document.getElementById("state").value;
+        var role = document.getElementById("role").value;
+
+        // Clear previous error message
+        document.getElementById("errorMessage").style.display = "none";
+
+        // Validation logic
+        if (!email || !username || !password || !confirmPassword || !location1 || !location2 || !location3 || !state || !role) {
+            document.getElementById("errorMessage").innerHTML = "Please fill out all fields";
+            document.getElementById("errorMessage").style.display = "block";
+            return false;
+        }
+
+        // Email validation
+        var emailRegex = /\S+@\S+\.\S+/;
+        if (!emailRegex.test(email)) {
+            document.getElementById("errorMessage").innerHTML = "Please enter a valid email address";
+            document.getElementById("errorMessage").style.display = "block";
+            return false;
+        }
+
+        // Password strength validation (you can add more complex validation as needed)
+        if (password.length < 8) {
+            document.getElementById("errorMessage").innerHTML = "Password must be at least 8 characters long";
+            document.getElementById("errorMessage").style.display = "block";
+            return false;
+        }
+
+        // Confirm password validation
+        if (password !== confirmPassword) {
+            document.getElementById("errorMessage").innerHTML = "Passwords do not match";
+            document.getElementById("errorMessage").style.display = "block";
+            return false;
+        }
+
+        // If all validations pass, send form data to server for further validation
+        if(sendDataToServer(email, username)==false){
+          return false;
+        }
+        return false; // Prevent form submission
+    }
+
+    var csrftoken = getCookie('csrftoken');
+
+    function getCookie(name) {
+      var cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+              var cookie = cookies[i].trim();
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+  }
+
+  function sendDataToServer(email, username) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/check_user_existence/", true);
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhr.setRequestHeader("X-CSRFToken", csrftoken); 
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                // User does not exist, proceed with registration
+                document.getElementById("signupForm").submit();
+            } else {
+                // Display error message returned from server
+                var response = JSON.parse(xhr.responseText);
+                if (response.error === "User already exists") {
+                    document.getElementById("errorMessage").innerHTML = response.error;
+                    document.getElementById("errorMessage").style.display = "block";
+                } else {
+                    // Handle other error cases
+                    document.getElementById("errorMessage").innerHTML = "An error occurred. Please try again later.";
+                    document.getElementById("errorMessage").style.display = "block";
+                }
+            }
+        }
+    };
+    var data = JSON.stringify({email: email, username: username});
+    xhr.send(data);
+    return false;
+}
+</script>
+</body>
+</html>

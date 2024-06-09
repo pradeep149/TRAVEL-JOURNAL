@@ -1,18 +1,92 @@
-{% extends 'base.html' %}
+{% load static %}
 
-{% block content %}
-<div class="form-container">
-    <h1>Login</h1>
-    <form method="post">
-        {% csrf_token %}
-        <label for="username">Username:</label>
-        <input type="text" name="username" required>
-        <label for="password">Password:</label>
-        <input type="password" name="password" required>
-        <button type="submit">Login</button>
-    </form>
-    {% if error %}
-        <p class="error">{{ error }}</p>
-    {% endif %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="\static\css\login.css">
+</head>
+<style>
+  body {
+    background-image: url('/static/media/tjbgimg.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+  }
+</style>
+<body>
+  
+  <div class="container">
+    {% comment %} <div class="head">
+      <img src="\static\media\logo.png" alt="Logo" style="height: 50px;width:50px;padding:10px">
+      <h1 style="color:black">TJ</h1><br>
+    </div>
+    <div class="picture">
+      <img src="\static\media\journalimg.jpg" alt="Picture">
+    </div> {% endcomment %}
+  <div class="form-container">
+    <div>
+      <h1>Login here</h1>
+    </div>
+    <form id="loginForm" method="post" onsubmit="return validateForm()">
+      {% csrf_token %}
+      {% if messages %}
+<div class="validation-message" id="validationMessage">
+<ul>
+  {% for message in messages %}
+    <li>{{ message }}</li>
+  {% endfor %}
+</ul>
 </div>
-{% endblock %}
+{% endif %}
+
+      <label for="email" style="margin-left:14%">Email</label><br>
+      <input id="email" name="email" type="text" placeholder="Enter your Email"><br>
+
+      <label for="password" style="margin-left:14%">Password</label><br>
+      <input id="password" name="password" type="password" placeholder="Enter your password"><br>
+
+      <div class="remember-me">
+        <div>
+          <input type="checkbox" id="remember" name="remember">
+          <label for="remember">Remember me</label>
+        </div>
+        <a href="forget-password">Forgot Password?</a>
+      </div>
+      
+
+      <input type="submit" value="Login">
+    </form>
+    <p>Don't have an account? <a href="register">Register now</a></p>
+</div>
+
+  <script>
+    function validateForm() {
+      var email = document.getElementById("email").value;
+      var password = document.getElementById("password").value;
+      var validationMessage = document.getElementById("validationMessage");
+
+      // Clear previous validation messages
+      validationMessage.innerHTML = '';
+
+      // Simple email validation
+      var emailRegex = /\S+@\S+\.\S+/;
+      if (!emailRegex.test(email)) {
+        validationMessage.innerHTML = "Please enter a valid email address.";
+        return false;
+      }
+
+      // Password length validation
+      if (password.length < 6) {
+        validationMessage.innerHTML = "Password must be at least 6 characters long.";
+        return false;
+      }
+
+      // Form is valid, allow submission
+      return true;
+    }
+  </script>
+</body>
+</html>
