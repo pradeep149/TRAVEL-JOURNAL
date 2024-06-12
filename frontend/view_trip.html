@@ -1,0 +1,419 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ trip.country }} - Travel Journal</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              colors: {
+                colSec: '#213638',
+                colPri: '#CFE7E5',
+                colHead: '#E5A13E',
+                colBase: '#ffffff',
+                colToggle: '#E5A13E',
+                colHighlight: '#213638'
+              }
+            }
+          }
+        }
+    </script>
+    <style>
+        .hidden-section {
+            display: none;
+        }
+
+        .visible-section {
+            display: block;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .fade-in {
+            opacity: 1;
+        }
+
+        .fade-out {
+            opacity: 0;
+        }
+
+        /* Toggle Switch Styles */
+        .toggle-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background-color: #E5A13E;
+            border-radius: 25px;
+            padding: 5px;
+            cursor: pointer;
+            width: 200px;
+            height: 40px;
+        }
+
+        .toggle-switch div {
+            width: 50%;
+            text-align: center;
+            padding: 10px;
+            color: white;
+            transition: color 0.3s;
+        }
+
+        .toggle-indicator {
+            position: absolute;
+            background-color: #213638;
+            border-radius: 20px;
+            width: 50%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            transition: left 0.3s;
+        }
+
+        .toggle-switch.active .toggle-indicator {
+            left: 50%;
+        }
+
+        .toggle-switch.active .toggle-label-photos {
+            color: #213638;
+        }
+
+        .toggle-switch:not(.active) .toggle-label-notes {
+            color: #213638;
+        }
+
+        .image-thumbnail {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+        #deleteButton {
+            display: none;
+        }
+
+        #imagePopup .popup-container {
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        #popupImage {
+            max-width: 100%;
+            max-height: 80vh;
+            width: auto;
+            height: auto;
+        }
+
+    </style>
+</head>
+<body class="bg-colPri">
+    <header class="flex justify-between items-center p-4 bg-colSec text-white">
+        <h1 class="text-xl font-bold">Travel Journal</h1>
+        <div>
+            <a href="{% url 'logout' %}" class="px-4 py-2 border-2 border-white rounded">Logout</a>
+            <a href="{% url 'user_home' user_id=trip.user.id %}" class="px-4 py-2 border-2 border-white rounded ml-2">Back to Home</a>
+        </div>
+    </header>
+
+    <main class="p-8">
+        <h2 class="text-2xl font-bold mb-4">{{ trip.country }}</h2>
+
+        <!-- Centered Toggle Switch -->
+        <div class="toggle-container">
+            <div id="toggleSwitch" class="toggle-switch">
+                <div class="toggle-indicator"></div>
+                <div class="toggle-label-photos">Photos</div>
+                <div class="toggle-label-notes">Notes</div>
+            </div>
+        </div>
+
+        <!-- Photos Section -->
+        <section id="photosSection" class="visible-section fade-in">
+            <div class="flex justify-end mb-4">
+                <button id="deleteButton" class="bg-red-600 text-white px-4 py-2 rounded">Delete Selected</button>
+            </div>
+            <h1 class="flex justify-center text-4xl font-bold mb-2">Photos</h1>
+
+            <form id="uploadForm" method="post" action="{% url 'add_photo' user_id=trip.user.id trip_id=trip.id %}" enctype="multipart/form-data" class="mb-4">
+                {% csrf_token %}
+                <label for="image" class="block mb-2">Upload Photos</label>
+                <input type="file" id="image" name="images" multiple class="border p-2 mb-4 w-full" required>
+                <button type="submit" class="bg-colHead text-white px-4 py-2 rounded">Upload</button>
+                <div id="progressContainer" class="hidden mt-2">
+                    <div id="progressBar" class="bg-colHead h-2 rounded" style="width: 0;"></div>
+                </div>
+            </form>
+            <h3 class="text-xl font-bold mb-2">Photos</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-4">
+                {% for photo in photos %}
+                    <div class="relative">
+                        <input type="checkbox" class="absolute top-2 left-2 delete-checkbox" value="{{ photo.id }}">
+                        <img src="{{ photo.image.url }}" alt="Photo" class="w-full h-auto object-cover cursor-pointer" data-uploaded="{{ photo.uploaded_at }}">
+                    </div>
+                {% endfor %}
+            </div>
+            
+        </section>
+
+        <!-- Notes Section -->
+        <section id="notesSection" class="hidden-section fade-out">
+            <h1 class="flex justify-center text-4xl font-bold mb-2">Notes</h1>
+            <form method="post" action="{% url 'add_note' user_id=trip.user.id trip_id=trip.id %}">
+                {% csrf_token %}
+                <label for="content" class="block mb-2">Write Note</label>
+                <textarea id="content" name="content" class="border p-2 mb-4 w-full" required></textarea>
+                <button type="submit" class="bg-colHead text-white px-4 py-2 rounded">Add Note</button>
+            </form>
+            <h3 class="text-xl font-bold my-2">Notes</h3>
+            <div class="mb-4">
+                {% for note in notes %}
+                <div class="bg-white p-4 rounded shadow-lg mb-4">
+                    <p>{{ note.content }}</p>
+                    <p class="text-gray-600 text-sm">Written on: {{ note.created_at }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+
+    <div id="imagePopup" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden">
+        <div class="bg-white p-4 rounded relative max-w-3xl mx-auto">
+            <button id="closePopup" class="absolute top-2 right-2 bg-red-600 text-white rounded-full px-3 py-1">X</button>
+            <img id="popupImage" src="" alt="Popup Image" class="w-auto h-auto object-contain">
+            <p id="imageDetails" class="mt-4 text-center"></p>
+        </div>
+    </div>
+
+    <div id="duplicatePopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-4 rounded">
+            <h3 class="text-xl font-bold mb-4">Duplicate Image Detected</h3>
+            <p>A duplicate image has been detected. What would you like to do?</p>
+            <button id="skipButton" class="bg-gray-600 text-white px-4 py-2 rounded mr-2">Skip</button>
+            <button id="replaceButton" class="bg-colHead text-white px-4 py-2 rounded">Replace</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteButton = document.getElementById('deleteButton');
+            const checkboxes = document.querySelectorAll('.delete-checkbox');
+            const imageElements = document.querySelectorAll('.image-thumbnail');
+            const popup = document.getElementById('imagePopup');
+            const popupImage = document.getElementById('popupImage');
+            const popupClose = document.getElementById('popupClose');
+
+            function toggleDeleteButton() {
+                const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+                deleteButton.style.display = anyChecked ? 'block' : 'none';
+            }
+
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', toggleDeleteButton);
+            });
+
+            document.querySelectorAll('img.cursor-pointer').forEach(img => {
+                img.addEventListener('click', function() {
+                    console.log("Check");
+                    const imageUrl = this.src;
+                    console.log(imageUrl);
+                    const uploadedAt = this.getAttribute('data-uploaded');
+                    document.getElementById('popupImage').src = imageUrl;
+                    document.getElementById('imageDetails').innerText = `Uploaded on: ${uploadedAt}`;
+                    document.getElementById('imagePopup').classList.remove('hidden');
+                });
+            });
+    
+            document.getElementById('closePopup').addEventListener('click', function() {
+                document.getElementById('imagePopup').classList.add('hidden');
+            });
+
+            toggleDeleteButton();
+
+            // Toggle switch functionality
+            const toggleSwitch = document.getElementById('toggleSwitch');
+            const photosSection = document.getElementById('photosSection');
+            const notesSection = document.getElementById('notesSection');
+
+            toggleSwitch.addEventListener('click', function() {
+                toggleSwitch.classList.toggle('active');
+                if (toggleSwitch.classList.contains('active')) {
+                    showSection(notesSection, photosSection);
+                } else {
+                    showSection(photosSection, notesSection);
+                }
+            });
+
+            document.getElementById('deleteButton').addEventListener('click', function() {
+                const checkboxes = document.querySelectorAll('.delete-checkbox:checked');
+                const ids = Array.from(checkboxes).map(cb => cb.value);
+                console.log(ids);
+    
+                if (ids.length > 0) {
+                    fetch('{% url "delete_photos" %}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({ ids })
+                    }).then(response => {
+                        if (response.ok) {
+                            location.reload();
+                        } else {
+                            alert('An error occurred while deleting the images.');
+                        }
+                    });
+                } else {
+                    alert('Please select at least one image to delete.');
+                }
+            });
+    
+
+            function showSection(sectionToShow, sectionToHide) {
+                sectionToHide.classList.remove('fade-in');
+                sectionToHide.classList.add('fade-out');
+                setTimeout(() => {
+                    sectionToHide.classList.add('hidden-section');
+                    sectionToHide.classList.remove('visible-section');
+                    sectionToShow.classList.remove('hidden-section');
+                    sectionToShow.classList.add('visible-section');
+                    setTimeout(() => {
+                        sectionToShow.classList.remove('fade-out');
+                        sectionToShow.classList.add('fade-in');
+                    }, 10);
+                }, 500);
+            }
+
+            const form = document.getElementById('uploadForm');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const formData = new FormData(form);
+                const xhr = new XMLHttpRequest();
+
+                xhr.open('POST', form.action, true);
+                xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
+
+                xhr.upload.addEventListener('progress', function(event) {
+                    if (event.lengthComputable) {
+                        const percentComplete = (event.loaded / event.total) * 100;
+                        progressBar.style.width = `${percentComplete}%`;
+                    }
+                });
+
+                xhr.onloadstart = function() {
+                    progressContainer.classList.remove('hidden');
+                    progressBar.style.width = '0';
+                };
+
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        console.log("Success");
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.duplicate_images) {
+                            showDuplicatePopup(response.duplicate_images);
+                        } else {
+                            window.location.reload();
+                        }
+                    } else {
+                        alert('An error occurred while uploading images.');
+                    }
+                };
+
+                xhr.send(formData);
+            });
+
+            function showDuplicatePopup(duplicateImages) {
+                const duplicatePopup = document.getElementById('duplicatePopup');
+                duplicatePopup.classList.remove('hidden');
+                const skipButton = document.getElementById('skipButton');
+                const replaceButton = document.getElementById('replaceButton');
+
+                skipButton.addEventListener('click', function() {
+                    processDuplicateImages(duplicateImages, 'skip');
+                });
+
+                replaceButton.addEventListener('click', function() {
+                    processDuplicateImages(duplicateImages, 'replace');
+                });
+            }
+
+            function processDuplicateImages(duplicateImages, action) {
+                const formData = new FormData();
+                formData.append('action', action);
+                formData.append('duplicate_images', JSON.stringify(duplicateImages));
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/process_duplicate_images/', true);
+                xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
+
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        window.location.reload();
+                    } else {
+                        alert('An error occurred while processing duplicate images.');
+                    }
+                };
+
+                xhr.send(formData);
+            }
+            const skipButton = document.getElementById('skipButton');
+            const replaceButton = document.getElementById('replaceButton');
+            const duplicatePopup = document.getElementById('duplicatePopup');
+            let duplicateImages = [];
+
+            skipButton.addEventListener('click', function() {
+                duplicateImages.shift();
+                handleDuplicateImages();
+            });
+
+            replaceButton.addEventListener('click', function() {
+                const formData = new FormData();
+                formData.append('replace', true);
+                formData.append('images', duplicateImages[0]);
+                formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+                
+                fetch('{% url "add_photo" user_id=trip.user.id trip_id=trip.id %}', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => {
+                    if (response.ok) {
+                        duplicateImages.shift();
+                        handleDuplicateImages();
+                    } else {
+                        alert('An error occurred while replacing the image.');
+                    }
+                });
+            });
+
+            function showDuplicatePopup(images) {
+                duplicateImages = images;
+                duplicatePopup.classList.remove('hidden');
+                handleDuplicateImages();
+            }
+    
+            function handleDuplicateImages() {
+                if (duplicateImages.length === 0) {
+                    duplicatePopup.classList.add('hidden');
+                    location.reload();
+                }
+            }
+
+        });
+    </script>
+</body>
+</html>

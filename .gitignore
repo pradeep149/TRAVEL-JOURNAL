@@ -3,3 +3,4 @@ admins/__pycache__
 travellers/__pycache__
 admins/migrations/__pycache__
 travellers/migrations/__pycache__
+static/photos

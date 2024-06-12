@@ -1,7 +1,7 @@
 import json
 from django.shortcuts import render, redirect
 from django import forms
-from .models import User, Admin, Resetpass, EmailVerification, adminReg
+from .models import User, Resetpass, EmailVerification, Admin
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from .custom_auth import  CustomBackend, auth
@@ -9,9 +9,14 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.db.models import Count
 import uuid
-from .mail_helper import send_forget_password_mail, send_user_confirmation_email, send_admin_reg_email
+from .mail_helper import send_forget_password_mail, send_user_confirmation_email
 from django.utils import timezone
 from datetime import timedelta, datetime
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
+from .models import Trip, Photo, Note
+import hashlib
 
 
 def index(request):
@@ -28,6 +33,7 @@ def login(request):
         if user is not None:
             if isinstance(user, User):
                 request.session['user_id'] = str(user.id)
+                print(str(user.id))
                 #to revert back to uuid while retireving use this user_id = uuid.UUID(request.session['user_id'])
                 if user.is_verified == 0:
                     return redirect('email-verification-pending/')
@@ -36,7 +42,7 @@ def login(request):
                 # elif user.status == 'rejected':
                 #     return redirect("/application-rejected")
                 else:
-                    return redirect('/home')
+                    return redirect('user_home', user_id = user.id)
             elif isinstance(user, Admin):
                 request.session['admin_id'] = user.id
                 if user.status == 'active':
@@ -258,3 +264,129 @@ def invalid_token(request):
 
 def application_rejected(request):
     return render(request, 'rejecteduser.html')
+
+def info(request):
+    return render(request, 'info.html')
+
+def user_home(request, user_id):
+    print("entered user home")
+    print(user_id)
+    try:
+        user_id = uuid.UUID(user_id)
+    except ValueError:
+        logout(request)
+        return redirect('login')
+    print("uuid validation of user id finished")
+
+    if request.session.get('user_id') != str(user_id):
+        logout(request)
+        return redirect('login')
+    print("correct user validation is finished")
+    
+    trips = Trip.objects.filter(user_id=user_id)
+    user = User.objects.get(id=user_id)
+    return render(request, 'user_home.html', {'trips': trips, 'user':user})
+
+def create_trip(request):
+    if request.method == 'POST':
+        country = request.POST['country']
+        user_id = request.session.get('user_id')
+        if not user_id:
+            return redirect('login')
+
+        user = get_object_or_404(User, id=user_id)
+        trip = Trip.objects.create(user=user, country=country)
+        return redirect('user_home', user_id=user.id)
+    return HttpResponseForbidden()
+
+def view_trip(request, user_id, trip_id):
+    print("entered view_trip")
+    print(user_id)
+    try:
+        user_id = uuid.UUID(user_id)
+    except ValueError:
+        logout(request)
+        return redirect('login')
+    
+    print("uuid validation of user id finished")
+
+    if request.session.get('user_id') != str(user_id):
+        logout(request)
+        return redirect('login')
+    
+    print("correct user validation is finished")
+    print("brfore trip object")
+    trip = get_object_or_404(Trip, id=trip_id, user_id=user_id)
+    print("after trip object")
+    photos = trip.photos.all()
+    notes = trip.notes.all()
+    return render(request, 'view_trip.html', {'trip': trip, 'photos': photos, 'notes': notes})
+
+def add_photo(request, user_id, trip_id):
+    if request.method == 'POST':
+        try:
+            user_id = uuid.UUID(user_id)  # Convert user_id to UUID
+        except ValueError:
+            logout(request)
+            return redirect('login')
+
+        if request.session.get('user_id') != str(user_id):
+            logout(request)
+            return redirect('login')
+
+        trip = get_object_or_404(Trip, id=trip_id, user_id=user_id)
+        images = request.FILES.getlist('images')
+        duplicate_images = []
+
+        for image in images:
+            image_hash = hashlib.md5(image.read()).hexdigest()
+            image.seek(0)  # Reset file pointer to the beginning after reading
+            if Photo.objects.filter(image_hash=image_hash).exists():
+                duplicate_images.append(image.name)
+            else:
+                Photo.objects.create(trip=trip, image=image, image_hash=image_hash)
+
+        if duplicate_images:
+            return JsonResponse({'duplicate_images': duplicate_images})
+
+        return JsonResponse({'status': 'success'})
+    return HttpResponseForbidden()
+
+def delete_photos(request):
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        ids = data.get('ids', [])
+        print(ids)
+        Photo.objects.filter(id__in=ids).delete()
+        return JsonResponse({'status': 'success'})
+    return HttpResponseForbidden()
+
+def add_note(request, user_id, trip_id):
+    if request.method == 'POST':
+        try:
+            user_id = uuid.UUID(user_id)  # Convert user_id to UUID
+        except ValueError:
+            logout(request)
+            return redirect('login')
+
+        if request.session.get('user_id') != str(user_id):
+            logout(request)
+            return redirect('login')
+
+        trip = get_object_or_404(Trip, id=trip_id, user_id=user_id)
+        note = Note.objects.create(trip=trip, content=request.POST['content'])
+        return redirect('view_trip', user_id=user_id, trip_id=trip_id)
+    return HttpResponseForbidden()
+
+def delete_duplicate_photo(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        image_hash = data.get('image_hash')
+        Photo.objects.filter(image_hash=image_hash).delete()
+        return JsonResponse({'status': 'success'})
+    return HttpResponseForbidden()
+
+def logout_view(request):
+    logout(request)
+    request.session.flush()
+    return redirect('login')

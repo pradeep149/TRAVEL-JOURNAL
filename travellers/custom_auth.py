@@ -2,7 +2,7 @@ from django.contrib.auth.backends import ModelBackend
 import hashlib
 
 from django.shortcuts import get_object_or_404
-from .models import User, Admin
+from .models import User
 
 class CustomBackend(ModelBackend):
     def authenticate(self, request, email=None, password=None):
