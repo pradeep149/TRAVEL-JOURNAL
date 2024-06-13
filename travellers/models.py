@@ -58,9 +58,15 @@ class EmailVerification(models.Model):
     
     
 class Trip(models.Model):
+    VISIBILITY_CHOICES = [
+        ('public', 'Public'),
+        ('private', 'Private'),
+    ]
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     country = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
+    visibility = models.CharField(max_length=10, choices=VISIBILITY_CHOICES, default='private')
 
     def __str__(self):
         return f"{self.country} by {self.user.username}"

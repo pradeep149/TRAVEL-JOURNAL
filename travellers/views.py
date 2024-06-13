@@ -269,23 +269,29 @@ def info(request):
     return render(request, 'info.html')
 
 def user_home(request, user_id):
-    print("entered user home")
-    print(user_id)
     try:
         user_id = uuid.UUID(user_id)
     except ValueError:
         logout(request)
         return redirect('login')
-    print("uuid validation of user id finished")
 
     if request.session.get('user_id') != str(user_id):
         logout(request)
         return redirect('login')
-    print("correct user validation is finished")
-    
-    trips = Trip.objects.filter(user_id=user_id)
+
+    query = request.GET.get('query', '')
+    trips = Trip.objects.filter(user_id=user_id, country__icontains=query)
     user = User.objects.get(id=user_id)
-    return render(request, 'user_home.html', {'trips': trips, 'user':user})
+    return render(request, 'user_home.html', {'trips': trips, 'user': user})
+
+def toggle_visibility(request, trip_id):
+    if request.method == 'POST':
+        trip = get_object_or_404(Trip, id=trip_id)
+        new_visibility = 'private' if trip.visibility == 'public' else 'public'
+        trip.visibility = new_visibility
+        trip.save()
+        return JsonResponse({'status': 'success', 'new_visibility': new_visibility})
+    return HttpResponseForbidden()
 
 def create_trip(request):
     if request.method == 'POST':
@@ -390,3 +396,12 @@ def logout_view(request):
     logout(request)
     request.session.flush()
     return redirect('login')
+
+def delete_trip(request, trip_id):
+    if request.method == 'DELETE':
+        trip = get_object_or_404(Trip, id=trip_id)
+        trip.photos.all().delete()
+        trip.notes.all().delete()
+        trip.delete()
+        return JsonResponse({'status': 'success'})
+    return HttpResponseForbidden()

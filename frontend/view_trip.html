@@ -129,7 +129,6 @@
     <main class="p-8">
         <h2 class="text-2xl font-bold mb-4">{{ trip.country }}</h2>
 
-        <!-- Centered Toggle Switch -->
         <div class="toggle-container">
             <div id="toggleSwitch" class="toggle-switch">
                 <div class="toggle-indicator"></div>
@@ -138,7 +137,6 @@
             </div>
         </div>
 
-        <!-- Photos Section -->
         <section id="photosSection" class="visible-section fade-in">
             <div class="flex justify-end mb-4">
                 <button id="deleteButton" class="bg-red-600 text-white px-4 py-2 rounded">Delete Selected</button>
@@ -166,7 +164,6 @@
             
         </section>
 
-        <!-- Notes Section -->
         <section id="notesSection" class="hidden-section fade-out">
             <h1 class="flex justify-center text-4xl font-bold mb-2">Notes</h1>
             <form method="post" action="{% url 'add_note' user_id=trip.user.id trip_id=trip.id %}">
@@ -240,7 +237,6 @@
 
             toggleDeleteButton();
 
-            // Toggle switch functionality
             const toggleSwitch = document.getElementById('toggleSwitch');
             const photosSection = document.getElementById('photosSection');
             const notesSection = document.getElementById('notesSection');

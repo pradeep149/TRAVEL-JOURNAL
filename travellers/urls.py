@@ -25,4 +25,6 @@ urlpatterns = [
     path('create_trip/', views.create_trip, name='create_trip'),
     path('delete_photos/', views.delete_photos, name='delete_photos'),
     path('delete_duplicate_photo/', views.delete_duplicate_photo, name='delete_duplicate_photo'),
+    path('delete_trip/<int:trip_id>/', views.delete_trip, name='delete_trip'),
+    path('toggle_visibility/<int:trip_id>/', views.toggle_visibility, name='toggle_visibility'),
 ]
