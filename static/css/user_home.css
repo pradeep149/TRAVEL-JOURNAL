@@ -1,5 +1,6 @@
 body {
     font-family: 'Inter', sans-serif;
+    overflow: hidden;
 }
 
 header {
@@ -219,3 +220,58 @@ button:hover {
     right: 10px;
 }
 
+
+.dbBg{
+    background: url('/static/media/dbBg.jpg') no-repeat center/cover;
+    box-shadow: 0px 5px 10px 1px black;
+    filter: brightness(0.6);
+    /*<ahref="https://www.freepik.com/free-photo/winding-road-cuts-path-through-lush-green-mountains-hazy-sky_134883478.htm#fromView=search&page=1&position=7&uuid=feb7af65-29a3-4e54-9290-0f5510ee46dc">Image by nuraghies on Freepik</a> */;
+    -webkit-filter: brightness(0.6);
+}
+
+.overlay{
+    position: absolute;
+    top: 20%;
+    left: 0%;
+    display: flex;
+}
+
+
+.badgeImg{
+    background: url('/static/media/hexBg.png') no-repeat center/cover;
+    width: 140px;
+    height: 130px;
+}
+
+.hidden{
+    display:none;
+}
+
+
+.dbCards::-webkit-scrollbar {
+    width: 12px;
+    border-radius: 24px;
+    -webkit-border-radius: 24px;
+    -moz-border-radius: 24px;
+    -ms-border-radius: 24px;
+    -o-border-radius: 24px;
+}
+   
+.dbCards::-webkit-scrollbar-track {
+    background: white;
+    border-radius: 24px;
+    box-shadow: inset 0 0 8px #21363890;
+    -webkit-border-radius: 24px;
+    -moz-border-radius: 24px;
+    -ms-border-radius: 24px;
+    -o-border-radius: 24px;
+}
+   
+  .dbCards::-webkit-scrollbar-thumb {
+    background: #213638;
+    border-radius: 22px;
+    -webkit-border-radius: 22px;
+    -moz-border-radius: 22px;
+    -ms-border-radius: 22px;
+    -o-border-radius: 22px;
+}

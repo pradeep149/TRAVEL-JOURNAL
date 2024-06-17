@@ -27,4 +27,8 @@ urlpatterns = [
     path('delete_duplicate_photo/', views.delete_duplicate_photo, name='delete_duplicate_photo'),
     path('delete_trip/<int:trip_id>/', views.delete_trip, name='delete_trip'),
     path('toggle_visibility/<int:trip_id>/', views.toggle_visibility, name='toggle_visibility'),
+    path('search_users/', views.search_users, name='search_users'),
+    path('profile/<user_id>/', views.profile_view, name='profile_view'),
+    path('user/<user_name>/<trip_id>/', views.public_view_trip, name='public_view_trip'),
+
 ]

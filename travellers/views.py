@@ -13,7 +13,6 @@ from .mail_helper import send_forget_password_mail, send_user_confirmation_email
 from django.utils import timezone
 from datetime import timedelta, datetime
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from .models import Trip, Photo, Note
 import hashlib
@@ -293,16 +292,31 @@ def toggle_visibility(request, trip_id):
         return JsonResponse({'status': 'success', 'new_visibility': new_visibility})
     return HttpResponseForbidden()
 
+class TripForm(forms.ModelForm):
+    class Meta:
+        model = Trip
+        fields = ['country', 'start_date', 'end_date']
+        widgets = {
+            'start_date': forms.DateInput(attrs={'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
 def create_trip(request):
     if request.method == 'POST':
-        country = request.POST['country']
         user_id = request.session.get('user_id')
-        if not user_id:
-            return redirect('login')
-
-        user = get_object_or_404(User, id=user_id)
-        trip = Trip.objects.create(user=user, country=country)
-        return redirect('user_home', user_id=user.id)
+        form = TripForm(request.POST)
+        print(form.is_valid())
+        print(form.errors)
+        if form.is_valid():
+            print("form is valid")
+            trip = form.save(commit=False)
+            user = get_object_or_404(User, id=user_id)
+            trip.user = user
+            trip.save()
+            return redirect('user_home', user_id=user.id)
+    else:
+        print("form is not valid")
+        form = TripForm()
     return HttpResponseForbidden()
 
 def view_trip(request, user_id, trip_id):
@@ -405,3 +419,36 @@ def delete_trip(request, trip_id):
         trip.delete()
         return JsonResponse({'status': 'success'})
     return HttpResponseForbidden()
+
+def search_users(request):
+    print("Headers:", request.headers)
+    print("Query Parameters:", request.GET)
+    
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' and 'q' in request.GET:
+        print("Request is here")
+        query = request.GET.get('q', '')
+        users = User.objects.filter(username__icontains=query)
+        results = [{'id': user.id, 'username': user.username} for user in users]
+        return JsonResponse({'users': results})
+    return JsonResponse({'users': []})
+
+def profile_view(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    trips = Trip.objects.filter(user=user, visibility='public')
+    trip_count = trips.count()
+    photo_count = sum(trip.photos.count() for trip in trips)
+    context = {
+        'profile_user': user,
+        'trip_count': trip_count,
+        'photo_count': photo_count,
+        'trips': trips,
+    }
+    return render(request, 'profile_view.html', context)
+
+def public_view_trip(request, user_name, trip_id):
+    user_id = get_object_or_404(User, username=user_name)
+    
+    trip = get_object_or_404(Trip, id=trip_id, user_id=user_id)
+    photos = trip.photos.all()
+    notes = trip.notes.all()
+    return render(request, 'public_trip_view.html', {'trip': trip, 'photos': photos, 'notes': notes})

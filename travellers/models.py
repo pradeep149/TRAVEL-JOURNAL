@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 import uuid
 import hashlib
@@ -57,6 +58,8 @@ class EmailVerification(models.Model):
         return self.user.email
     
     
+from django.utils import timezone
+
 class Trip(models.Model):
     VISIBILITY_CHOICES = [
         ('public', 'Public'),
@@ -67,6 +70,8 @@ class Trip(models.Model):
     country = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     visibility = models.CharField(max_length=10, choices=VISIBILITY_CHOICES, default='private')
+    start_date = models.DateField(default=timezone.now)
+    end_date = models.DateField(default=timezone.now)
 
     def __str__(self):
         return f"{self.country} by {self.user.username}"

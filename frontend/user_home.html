@@ -46,6 +46,7 @@
         .dropdown-content {
             display: none;
             position: absolute;
+            right: 0;
             background-color: white;
             min-width: 160px;
             box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
@@ -101,6 +102,45 @@
             transform: translateY(-50%);
             color: #213638;
         }
+
+        .trip-item {
+            cursor: pointer;
+            overflow: hidden;
+            border-radius: 0.5rem;
+            transition: transform 0.3s ease-in-out;
+            position: relative;
+        }
+        .trip-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-top-left-radius: 0.5rem;
+            border-top-right-radius: 0.5rem;
+        }
+        .trip-content {
+            padding: 1rem;
+            background-color: white;
+        }
+        .trip-item:hover {
+            transform: scale(1.05);
+        }
+        .dropbtn {
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .search-results-item {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+        }
+        .search-results-item:hover {
+            background-color: #f1f1f1;
+        }
     </style>
 </head>
 <body class="bg-colPri">
@@ -121,12 +161,14 @@
         <div id="dashboard" class="hidden">
             <h2 class="text-2xl font-bold mb-4">Dashboard</h2>
             <div class="search-bar">
-                <input type="text" id="dashboardSearch" placeholder="Search trips...">
+                <input input type="text" id="dashboardSearch" placeholder="Search users...">
                 <span class="search-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M12.9 14.32a8 8 0 111.41-1.41l4.39 4.39a1 1 0 01-1.42 1.42l-4.38-4.39zM14 8a6 6 0 11-12 0 6 6 0 0112 0z" clip-rule="evenodd" />
                     </svg>
                 </span>
+            </div>
+            <div id="searchResults" class="absolute bg-white border border-gray-200 rounded mt-1 max-h-64 overflow-y-auto w-full hidden">
             </div>
             <p>Welcome to your travel journal dashboard!</p>
         </div>
@@ -142,11 +184,22 @@
             </div>
             <div id="journeysList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {% for trip in trips %}
-                    <div class="trip-item bg-white p-4 rounded shadow-lg relative">
-                        <h3 class="trip-country text-xl font-bold">{{ trip.country }}</h3>
-                        <p>Created on: {{ trip.created_at }}</p>
-                        <p>Visibility: {{ trip.visibility }}</p>
-                        <a href="{% url 'view_trip' user_id=trip.user.id trip_id=trip.id %}" class="text-colHead underline">View Trip</a>
+                    <div class="trip-item bg-white rounded shadow-lg cursor-pointer" onclick="location.href='{% url 'view_trip' user_id=trip.user.id trip_id=trip.id %}'">
+                        {% with trip.photos.first as photo %}
+                            {% if photo.image.url is not none %}
+                                <img src="{{ photo.image.url }}" alt="Trip Image" class="rounded-t-lg">
+                            {% endif %}
+                            {% if photo.image.url is none %}
+                                <img src="/static/media/tripbg.jpg" alt="Trip Image" class="rounded-t-lg">
+                            {% endif %}
+                        {% endwith %}
+                        <div class="trip-content p-4">
+                            <h3 class="trip-country text-xl font-bold">{{ trip.country }}</h3>
+                            <p>Created on: {{ trip.created_at }}</p>
+                            <p>Start Date: {{ trip.start_date }}</p>
+                            <p>End Date: {{ trip.end_date }}</p>
+                            <p>Visibility: {{ trip.visibility }}</p>
+                        </div>
                         <div class="dropdown absolute top-2 right-2">
                             <button class="dropbtn">⋮</button>
                             <div class="dropdown-content">
@@ -167,6 +220,10 @@
                 {% csrf_token %}
                 <label for="country" class="block mb-2">Country</label>
                 <input type="text" id="country" name="country" class="border p-2 mb-4 w-full" required>
+                <label for="start_date" class="block mb-2">Start Date</label>
+                <input type="date" id="start_date" name="start_date" class="border p-2 mb-4 w-full" required>
+                <label for="end_date" class="block mb-2">End Date</label>
+                <input type="date" id="end_date" name="end_date" class="border p-2 mb-4 w-full" required>
                 <button type="submit" class="bg-colHead text-white px-4 py-2 rounded">Create</button>
             </form>
             <button id="closeCreatePopupBtn" class="mt-4 text-red-600">Cancel</button>
@@ -196,6 +253,8 @@
     </div>
 
     <script>
+        
+
         document.getElementById('createTripBtn').onclick = function() {
             document.getElementById('createTripPopup').classList.add('active');
         }
@@ -278,11 +337,27 @@
             document.getElementById('toggleVisibilityPopup').classList.remove('active');
         }
 
+        document.querySelector('.nav-dashboard').addEventListener('click', function() {
+            document.getElementById('dashboard').classList.remove('hidden');
+            document.getElementById('myJourneys').classList.add('hidden');
+            document.querySelector('.nav-dashboard').classList.add('nav-active');
+            document.querySelector('.nav-my-journeys').classList.remove('nav-active');
+        });
+    
+        document.querySelector('.nav-my-journeys').addEventListener('click', function() {
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('myJourneys').classList.remove('hidden');
+            document.querySelector('.nav-dashboard').classList.remove('nav-active');
+            document.querySelector('.nav-my-journeys').classList.add('nav-active');
+        });
+
+
         const journeysSearch = document.getElementById('journeysSearch');
         const journeysList = document.getElementById('journeysList');
         const tripItems = document.querySelectorAll('.trip-item');
 
         journeysSearch.addEventListener('input', function() {
+            console.log("searching...");
             const filter = journeysSearch.value.toLowerCase();
             tripItems.forEach(item => {
                 const country = item.querySelector('.trip-country').innerText.toLowerCase();
@@ -293,6 +368,68 @@
                 }
             });
         });
+
+        document.querySelectorAll('.dropdown-content a').forEach(item => {
+            item.addEventListener('click', event => {
+                event.stopPropagation();
+            });
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const dashboardSearch = document.getElementById('dashboardSearch');
+            const searchResults = document.getElementById('searchResults');
+        
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+        
+            const csrftoken = getCookie('csrftoken');
+        
+            dashboardSearch.addEventListener('input', function() {
+                const query = dashboardSearch.value;
+                if (query.length > 0) {
+                    fetch(`/search_users/?q=${query}`, {
+                        method: 'GET',
+                        headers: {
+                            'X-CSRFToken': csrftoken,
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        searchResults.innerHTML = '';
+                        if (data.users.length > 0) {
+                            data.users.forEach(user => {
+                                const resultItem = document.createElement('div');
+                                resultItem.classList.add('search-results-item');
+                                resultItem.innerText = user.username;
+                                resultItem.onclick = () => window.location.href = `/profile/${user.id}/`;
+                                searchResults.appendChild(resultItem);
+                            });
+                            searchResults.classList.remove('hidden');
+                        } else {
+                            searchResults.classList.add('hidden');
+                        }
+                    });
+                } else {
+                    searchResults.classList.add('hidden');
+                }
+            });
+        });
+        
+        
     </script>
 </body>
 </html>

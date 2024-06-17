@@ -1,0 +1,173 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Home - Travel Journal</title>
+    <link rel="stylesheet" href="{% static 'css/user_home.css' %}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              colors: {
+                colSec: '#213638',
+                colPri: '#CFE7E5',
+                colHead: '#E5A13E',
+                colBase: '#ffffff'
+              }
+            }
+          }
+        }
+    </script>
+    <style>
+        .popup {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .popup.active {
+            display: flex;
+        }
+        .popup-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 0.5rem;
+        }
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown-content a:hover {background-color: #ddd;}
+        .dropdown:hover .dropdown-content {display: block;}
+        .dropdown:hover .dropbtn {background-color: #3e8e41;}
+        .navbar {
+            display: flex;
+            justify-content: center;
+            background-color: #213638;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .navbar a {
+            color: white;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .navbar a:hover {
+            color: #E5A13E;
+        }
+        .nav-active {
+            border-bottom: 2px solid #E5A13E;
+        }
+        .search-bar {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        .search-bar input {
+            border: 2px solid #213638;
+            border-radius: 0.5rem;
+            padding: 0.5rem 2.5rem 0.5rem 0.5rem;
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 3%;
+        }
+        .search-icon {
+            position: absolute;
+            right: 31%;
+            top: 27%;
+            transform: translateY(-50%);
+            color: #213638;
+        }
+
+        .trip-item {
+            cursor: pointer;
+            overflow: hidden;
+            border-radius: 0.5rem;
+            transition: transform 0.3s ease-in-out;
+            position: relative;
+        }
+        .trip-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-top-left-radius: 0.5rem;
+            border-top-right-radius: 0.5rem;
+        }
+        .trip-content {
+            padding: 1rem;
+            background-color: white;
+        }
+        .trip-item:hover {
+            transform: scale(1.05);
+        }
+        .dropbtn {
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .search-results-item {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+        }
+        .search-results-item:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body class="bg-colPri">
+    <div class="profile">
+        <h2 class="text-2xl font-bold mb-4">{{ profile_user.username }}'s Profile</h2>
+        <p>Number of trips: {{ trip_count }}</p>
+        <p>Number of photos: {{ photo_count }}</p>
+        <div class="trips">
+            <h3 class="text-xl font-bold mb-4">Public Trips</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for trip in trips %}
+                    <div class="trip-item bg-white rounded shadow-lg"  onclick="location.href='{% url 'public_view_trip' user_name=trip.user.username trip_id=trip.id %}'">
+                        {% if trip.photos.first %}
+                            <img src="{{ trip.photos.first.image.url }}" alt="Trip Image" class="rounded-t-lg">
+                        {% else %}
+                            <img src="/static/media/tripbg.jpg" alt="Trip Image" class="rounded-t-lg">
+                        {% endif %}
+                        <div class="trip-content p-4">
+                            <h3 class="trip-country text-xl font-bold">{{ trip.country }}</h3>
+                            <p>Created on: {{ trip.created_at }}</p>
+                            <p>Start Date: {{ trip.start_date }}</p>
+                            <p>End Date: {{ trip.end_date }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
