@@ -1,0 +1,139 @@
+body {
+  background-color: #fefefe;
+  color: white;
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.form-container {
+  background-color: rgba(192, 192, 192, 0.8); /* Light gray with low opacity */
+  width: 80%;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 15px;
+  margin: 4%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.form-container h1 {
+  margin-left: 40%;
+  margin-right: auto;
+  font-size: 40px;
+  padding: 20px;
+  color: black;
+}
+
+.form-container form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 80%;
+}
+
+.form-container label {
+  color: black;
+}
+
+.form-container input[type="text"],
+.form-container input[type="password"] {
+  border: 1px solid #ccc;
+  padding: 15px;
+  border-radius: 15px;
+  display: block;
+  margin-left: 14%;
+  font-size: 16px;
+  max-width: 70%;
+}
+
+.form-container input[type="submit"] {
+  margin-top: 15px;
+  background-color: #32B1F9;
+  color: #fff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  margin-left: 37%;
+  max-width: 30%;
+  transition: background-color 0.3s ease;
+}
+
+.form-container input[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+.form-container .remember-me {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-left: 14%;
+  width: 72%;
+  margin-bottom: 10px;
+}
+
+.form-container .remember-me label {
+  font-size: 16px;
+}
+
+.form-container .validation-message {
+  background-color: #f7a9af;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+p {
+  margin-left: 14%;
+  color: #000000;
+  font-size: 1em;
+  margin-bottom: 20px;
+}
+
+a {
+  text-decoration: none;
+  color: #ff0000;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+.container {
+  max-width: 900px;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.form-container {
+  width: 100%;
+  margin-top: 0;
+}
+}
+
+@media (max-width: 767px) {
+.container {
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-container {
+  width: 100%;
+  margin-top: 20px;
+}
+}

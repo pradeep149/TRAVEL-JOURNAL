@@ -1,0 +1,194 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Journal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-6Zl6ySNVTuz6xoFv4aAwN6R1QI5FjRxkezlMR6XnSDt0ixusnG21S8cbPItLmU51qBxjkTzCfOsTJG5HxHHp6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              colors: {
+                colSec: '#213638',
+                colPri: '#CFE7E5',
+                colHead: '#E5A13E',
+                colBase: '#ffffff'
+              }
+            }
+          }
+        }
+    </script>
+    <style>
+        .popup {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .popup-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-colPri">
+    <header class="flex justify-center">
+    <div class="header w-5/6">
+        <div class="logo-title">
+            <img class="logo" src="{% static 'media/logo.png' %}" alt="Travel Journal Logo">
+            <h1 class="subpixel-antialised text-xl font-bold cursor-pointer">Travel Journal</h1>
+        </div>
+       <div class="flex justify-center">
+        <nav class="rounded-lg bg-colSec p-4 text-white cursor-pointer">
+            <a href="#" class="ml-4 mr-2 hover:font-bold hover:underline hover:underline-offset-2 ease-out hover:tracking-wider hover:ease-in duration-150">Home</a>
+            <a href="#about" class="ml-4 mr-2 hover:font-bold hover:underline hover:underline-offset-2 ease-out hover:tracking-wider hover:ease-in duration-150">About</a>
+            <a href="#featured" class="ml-4 mr-2 hover:font-bold hover:underline hover:underline-offset-2 ease-out hover:tracking-wider hover:ease-in duration-150">Features</a>
+            <a href="#contact" class="ml-4 mr-2 hover:font-bold hover:underline hover:underline-offset-2 ease-out hover:tracking-wider hover:ease-in duration-150">Contact</a>
+        </nav>
+    </div>
+        <div class="flex justify-end w-1/6">
+        <div class="border-2 border-colSec rounded-md pl-4 pr-4 pt-2 pb-2 hover:bg-colSec hover:ease-in ease-out duration-100 hover:text-white">
+            <a href="login"><b>Login</b></a>
+        </div>
+    </div>
+    </div>
+</header>
+
+<section id="home">
+    <div class="w-full flex justify-center mt-4 mb-4">
+        <div class="w-max m-2 p-2 cursor-pointer">
+            <h1 class="text-3xl subpixel-antialiased font-bold tracking-normal text-center hover:text-cyan-950 hover:easy-in easy-out duration-300 hover:scale-110">Welcome to Travel Journal</h1>
+            <p class="text-md text-center subpixel-antialiased tracking-normal">Share your travel experiences and inspire others with your journey!</p>
+        </div>
+    </div>
+</section>
+
+<section class="vision" id="about">
+    <div class="vision-content">
+        <h2 class="text-3xl font-bold subpixel-antialised tracking-normal">About Us</h2>
+        <p class="subpixel-antialiased tracking-normal text-md tracking-wider">
+            At Travel Journal, we believe that every journey is unique and worth sharing. Our platform allows you to post photos, share your experiences, and rate the places you visit. By making your data public, you help other travelers make informed decisions based on real experiences.
+            <br><br>
+            Join our community of explorers and start documenting your adventures today. Together, we can create a valuable resource for travelers worldwide.
+            <br><br>
+            Whether you’re seeking inspiration for your next trip or wanting to share your travel stories, Travel Journal is the place for you.
+        </p>
+        <p class="mt-4"><a href="#" class="info-link text-colHead" id="infoLink">For more info click here <i class="fas fa-info-circle"></i></a></p>
+    </div>
+    <img class="vision-image" src="{% static 'media/vision.jpeg' %}" alt="Travel Vision Image">
+</section>
+
+<section class="m-4 p-2" id="featured">
+    <h2 class="text-3xl font-bold subpixel-antialised mt-5 mb-2 ml-6">Features</h2>
+    <div class="features">
+        <div class="feature">
+            <h3>Post Photos</h3>
+            <p>Share your travel moments with our community by posting photos of the places you visit. Capture the beauty and essence of each location and inspire others with your visual stories.</p>
+        </div>
+        <div class="feature">
+            <h3>Write Experiences</h3>
+            <p>Document your travel experiences, share tips, and provide insights on the best places to visit. Your stories can guide other travelers and help them make the most of their journeys.</p>
+        </div>
+        <div class="feature">
+            <h3>Rate Locations</h3>
+            <p>Rate the places you visit based on various parameters like cleanliness, hospitality, and overall experience. Your ratings help build a comprehensive guide for future travelers.</p>
+        </div>
+    </div>
+</section>
+
+<footer class="bg-colSec" id="contact">
+    <div class="flex">
+        <div class="flex-row justify-between m-4">
+            <h2 class="text-white font-bold text-xl m-2">About Us</h2>
+            <p class="text-white text-md m-2 w-1/2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla tristique magna nec justo convallis fermentum.</p>
+            <h2 class="text-white font-bold text-xl m-2">Contact</h2>
+            <div class="contact m-2">
+                <span class="text-white"><i class="fas fa-phone"></i> +1 (123) 456-7890</span>
+                <span class="text-white"><i class="fas fa-envelope"></i> info@traveljournal.com</span>
+            </div>
+        </div>
+        <div class="flex-row w-1/5">
+            <h2 class="text-white font-bold text-xl m-2">Quick Links</h2>
+            <ul class="text-slate-400 m-2 text-md">
+                <li><a href="#" class="hover:text-white hover:font-bold">Home</a></li>
+                <li><a href="#" class="hover:text-white hover:font-bold">About Us</a></li>
+                <li><a href="#" class="hover:text-white hover:font-bold">Features</a></li>
+                <li><a href="#" class="hover:text-white hover:font-bold">Contact</a></li>
+            </ul>
+        </div>
+        <div class="flex-row">
+            <h2 class="text-white font-bold text-xl m-2">Contact Us</h2>
+            <form action="#">
+                <input type="email" name="email" class="w-3/4 text-black rounded-md m-2" placeholder="Your email address">
+                <textarea name="message" class="text-black w-3/4 h-1/3 rounded-md m-2" placeholder="Your message"></textarea>
+                <button type="submit" class="bg-colHead text-white font-bold text-xl rounded-lg w-1/4 m-2 pt-1 pb-1 hover:border-2 hover:border-colPri">
+                    Send
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="flex w-full justify-center bg-colHead text-md text-white font-semibold cursor-pointer p-1">
+        &copy; 2024 Travel Journal. All rights reserved.
+    </div>
+</footer>
+
+<div id="infoPopup" class="popup">
+    <div class="popup-content">
+        <span class="close" id="closePopup">&times;</span>
+        <h2 class="text-2xl font-bold">Full Vision Information</h2>
+        <p class="mt-2">At Travel Journal, we believe that every journey is unique and worth sharing. Our platform allows you to post photos, share your experiences, and rate the places you visit. By making your data public, you help other travelers make informed decisions based on real experiences.</p>
+        <p class="mt-2">Join our community of explorers and start documenting your adventures today. Together, we can create a valuable resource for travelers worldwide.</p>
+        <p class="mt-2">Whether you’re seeking inspiration for your next trip or wanting to share your travel stories, Travel Journal is the place for you.</p>
+    </div>
+</div>
+
+<script>
+    document.getElementById('infoLink').onclick = function() {
+        document.getElementById('infoPopup').style.display = 'block';
+    }
+
+    document.getElementById('closePopup').onclick = function() {
+        document.getElementById('infoPopup').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target == document.getElementById('infoPopup')) {
+            document.getElementById('infoPopup').style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>

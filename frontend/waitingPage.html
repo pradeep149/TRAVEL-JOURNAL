@@ -1,0 +1,42 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Application Pending</title>
+<link rel="stylesheet" href="{% static 'css/waitingpage.css' %}">
+</head>
+<body>
+
+    <div class="thank-you">
+        <p>Thank you for submitting the application. It will go through a verification process. Once completed, you'll be able to access your dashboard.</p>
+    </div>
+
+<div class="container">
+
+  <img src="{% static 'media/clock.png' %}" alt="Clock">
+
+  <h1>Application Pending</h1>
+  <p>Your application is currently pending. Please check back after some time.</p>
+  <p>You will be redirected to the homepage in <span id="countdown">10</span> seconds.</p>
+  <p id="go-home"><a href="/">Click here</a> to go back to homepage immediately.</p>
+</div>
+
+<script>
+    let countdown = 10;
+  const countdownElement = document.getElementById('countdown');
+
+  function updateCountdown() {
+    countdown--;
+    countdownElement.textContent = countdown;
+
+    if (countdown === 0) {
+      window.location.replace('/');
+    }
+  }
+  setInterval(updateCountdown, 1000);
+</script>
+</body>
+</html>

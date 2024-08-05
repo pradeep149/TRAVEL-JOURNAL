@@ -1,0 +1,72 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invalid URL</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #effde1ae;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            background-color: #f0f0f0;
+            margin: auto;
+            box-shadow: 0 14px 18px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            width: 50%;
+            padding: 30px;
+            box-sizing: border-box;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .head {
+            display: flex;
+            flex-direction: row;
+        }
+        
+        .head img {
+            width: 50px; /* Adjust the width of your logo */
+            height: 50px;
+            padding: 10px;
+        }
+
+        h2 {
+            color: red;
+        }
+
+        p {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        a {
+            color: #32B1F9;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="head">
+        <img src="\static\media\logo.png" alt="Overleaf Logo">
+        <h1>TJ</h1>
+    </div>
+    <div class="container">
+        <h2>Invalid URL</h2>
+        <p>The URL you're trying to access is not valid.</p>
+        <p>Please check the URL you've entered.</p>
+        <p>Click here to go back to <a href="/login">Login</a>.</p>
+    </div>
+</body>
+</html>
